@@ -8,28 +8,14 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       pollTime:0
     },
 
-    _update: function(){
-      for(var i in this._layersOld)
-      {
-          this._map.removeLayer(this._layersOld[i]);
-          this.removeLayer(this._layersOld[i]);
-      }
-    },
-
     callback: function(data) {
       if(this.options.light)
       {
-        this._layersOld = this.getLayers();
+        this.clearLayers();//if needed, we clean the layers
       }
 
-      //First we add the new data
+      //Then we add the new data
       this.addData(data);
-
-      //Second we clean the data if wanted
-      if(this.options.light)
-      {
-        this._update();
-      }
     },
 
   initialize: function (options) {
