@@ -49,7 +49,7 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 ## How to use the "parameters" option?
 This option can be used in 2 ways : 
 * static : ```javascript parameters:{toto:123}, ```
-* dynamic: ```javacript parameters:{toto:{scope:"window"}}, ```
+* dynamic: ```javacript parameters:{toto:{scope:window}}, ```
 
 In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
 
