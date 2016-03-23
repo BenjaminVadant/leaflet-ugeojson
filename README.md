@@ -61,3 +61,6 @@ This plugin is working but might not be optimal, so feel free to fork it and sen
 
 ## Remark
 I'm not using the "movend" event as it triggers strange behavior : it can start an autocall loop! So I prefer to use dragend and zoomend.
+
+##Thanks
+I would like to thank kartenkarsten for his plugin https://github.com/kartenkarsten/leaflet-layer-overpass/ which was a base for this one.
