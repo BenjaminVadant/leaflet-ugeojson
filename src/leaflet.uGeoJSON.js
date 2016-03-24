@@ -5,7 +5,8 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       endpoint: "-1",
       parameters: {},
       maxRequests: 5,
-      pollTime:0
+      pollTime:0,
+	  once : false
     },
 
     callback: function(data) {
@@ -82,14 +83,18 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
   onAdd: function (map) {
     this._map = map;
 
-    this.onMoveEnd();
     if (this.options.endpoint.indexOf("http") != -1) {
-      map.on('dragend', this.onMoveEnd, this);
-      map.on('zoomend', this.onMoveEnd, this);
-    }
-    if (this.options.pollTime > 0) {
-      this.intervalID = window.setInterval(this.onMoveEnd, this.options.pollTime);
-    }
+		this.onMoveEnd();
+		
+		if(!once) {
+			map.on('dragend', this.onMoveEnd, this);
+			map.on('zoomend', this.onMoveEnd, this);
+		
+			if (this.options.pollTime > 0) {
+			  this.intervalID = window.setInterval(this.onMoveEnd, this.options.pollTime);
+			}
+		}
+	}
 
     if (this.options.debug) {
       console.debug("add layer");
@@ -102,7 +107,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     }
     L.LayerGroup.prototype.onRemove.call(this, map);
 
-    if (this.options.pollTime > 0) {
+    if (!once && this.options.pollTime > 0) {
       window.clearInterval(this.intervalID);
     }
     
@@ -111,12 +116,14 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       this._requests.shift().abort();
     }
 
-    map.off({
-      'dragend': this.onMoveEnd
-    }, this);
-    map.off({
-      'zoomend': this.onMoveEnd
-    }, this);
+    if(!once) {
+		map.off({
+		  'dragend': this.onMoveEnd
+		}, this);
+		map.off({
+		  'zoomend': this.onMoveEnd
+		}, this);
+	}
 
     this._map = null;
   }
