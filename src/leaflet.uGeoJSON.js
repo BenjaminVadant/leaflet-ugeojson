@@ -6,7 +6,8 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       parameters: {},
       maxRequests: 5,
       pollTime:0,
-      once : false
+      once : false,
+      after : function(data){}
     },
 
     callback: function(data) {
@@ -17,6 +18,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
 
       //Then we add the new data
       this.addData(data);
+      this.options.after(data);
     },
 
   initialize: function (options) {
@@ -86,7 +88,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     if (this.options.endpoint.indexOf("http") != -1) {
 		this.onMoveEnd();
 		
-		if(!this.once) {
+		if(!this.options.once) {
 			map.on('dragend', this.onMoveEnd, this);
 			map.on('zoomend', this.onMoveEnd, this);
 		
@@ -107,7 +109,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     }
     L.LayerGroup.prototype.onRemove.call(this, map);
 
-    if (!this.once && this.options.pollTime > 0) {
+    if (!this.options.once && this.options.pollTime > 0) {
       window.clearInterval(this.intervalID);
     }
     
@@ -116,7 +118,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       this._requests.shift().abort();
     }
 
-    if(!this.once) {
+    if(!this.options.once) {
 		map.off({
 		  'dragend': this.onMoveEnd
 		}, this);
