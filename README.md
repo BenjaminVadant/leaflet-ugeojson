@@ -45,6 +45,7 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 * pollTime: the time in ms between 2 updates without moving. Default : 0 (ie no automatic update)
 
 * parameters: additional parameters to the post requests,
+* once : allow to load the layer only once. Default : false
 
 ## How to use the "parameters" option?
 This option can be used in 2 ways : 
