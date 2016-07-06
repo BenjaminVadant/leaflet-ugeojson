@@ -43,7 +43,7 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 
 * **maxRequests**: the number of parallel requests allowed. Default : 5,
 * **pollTime**: the time in ms between 2 updates without moving. Default : 0 (ie no automatic update), 
-* **usebbox**: send the bounding box values as `bbox=southwest_lng,southwest_lat,northeast_lng,northeast_lat` instead of the default individual `south`, `north`, `east` and `west` parameters.
+* **usebbox**: send the bounding box values as `bbox=southwest_lng,southwest_lat,northeast_lng,northeast_lat` instead of the default individual `south`, `north`, `east` and `west` parameters. Default : false,
 
 * **parameters**: additional parameters to the post requests,
 * **once** : allow to load the layer only once. Default : false,
