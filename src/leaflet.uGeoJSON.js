@@ -1,13 +1,14 @@
 L.UGeoJSONLayer = L.GeoJSON.extend({
     options: {
       debug: false,
-      light:true,
+      light: true,
+      usebbox: false, 
       endpoint: "-1",
       parameters: {},
       maxRequests: 5,
       pollTime:0,
-      once : false,
-      after : function(data){}
+      once: false,
+      after: function(data){}
     },
 
     callback: function(data) {
@@ -53,11 +54,17 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     }
 
     var bounds = this._map.getBounds();
+
+    if ( this.options.usebbox ) {
+      postData.append('bbox', bounds.toBBoxString());
+
+    } else {
+      postData.append('south', bounds.getSouth());
+      postData.append('north', bounds.getNorth());
+      postData.append('east', bounds.getEast());
+      postData.append('west', bounds.getWest());
+    }
     postData.append('zoom', this._map.getZoom());
-    postData.append('south', bounds.getSouth());
-    postData.append('north', bounds.getNorth());
-    postData.append('east', bounds.getEast());
-    postData.append('west', bounds.getWest());
 
     var self = this;
     var request = new XMLHttpRequest();

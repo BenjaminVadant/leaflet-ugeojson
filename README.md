@@ -36,17 +36,18 @@ L.uGeoJSONLayer({ endpoint:"URL TO SERVER"
 As this layer is based on the GeoJSON layer, you can use all the original options.
 
 Here are the additionnal options you can specify as an argument of L.uGeoJSONLayer.
-* endpoint: Mandatory : the url of the server the plugin is going to reach for new data,
+* **endpoint**: Mandatory : the url of the server the plugin is going to reach for new data,
 
-* debug: display debug log in the console or not. Default : false,
-* light: remove or not data after updating. Default : true,
+* **debug**: display debug log in the console or not. Default : false,
+* **light**: remove or not data after updating. Default : true,
 
-* maxRequests: the number of parallel requests allowed. Default : 5,
-* pollTime: the time in ms between 2 updates without moving. Default : 0 (ie no automatic update)
+* **maxRequests**: the number of parallel requests allowed. Default : 5,
+* **pollTime**: the time in ms between 2 updates without moving. Default : 0 (ie no automatic update), 
+* **usebbox**: send the bounding box values as `bbox=southwest_lng,southwest_lat,northeast_lng,northeast_lat` instead of the default individual `south`, `north`, `east` and `west` parameters. Default : false,
 
-* parameters: additional parameters to the post requests,
-* once : allow to load the layer only once. Default : false,
-* after : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
+* **parameters**: additional parameters to the post requests,
+* **once** : allow to load the layer only once. Default : false,
+* **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
 
 ## How to use the "parameters" option?
 This option can be used in 2 ways : 
