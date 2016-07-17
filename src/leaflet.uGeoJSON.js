@@ -2,7 +2,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     options: {
       debug: false,
       light: true,
-      usebbox: false, 
+      usebbox: false,
       endpoint: "-1",
       parameters: {},
       maxRequests: 5,
@@ -22,9 +22,10 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       this.options.after(data);
     },
 
-  initialize: function (options) {
-    L.Util.setOptions(this, options);
-    this._layers = {};
+  initialize: function (uOptions, options) {
+    L.GeoJSON.prototype.initialize.call(this, undefined, options);
+    L.Util.setOptions(this, uOptions);
+
     this._layersOld = [];
     this._requests = [];
   },
@@ -86,7 +87,6 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
 
     this._requests.push(request);
     request.send(postData);
-    
   },
 
   onAdd: function (map) {
@@ -94,11 +94,11 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
 
     if (this.options.endpoint.indexOf("http") != -1) {
 		this.onMoveEnd();
-		
+
 		if(!this.options.once) {
 			map.on('dragend', this.onMoveEnd, this);
 			map.on('zoomend', this.onMoveEnd, this);
-		
+
 			if (this.options.pollTime > 0) {
 			  this.intervalID = window.setInterval(this.onMoveEnd, this.options.pollTime);
 			}
@@ -119,8 +119,8 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     if (!this.options.once && this.options.pollTime > 0) {
       window.clearInterval(this.intervalID);
     }
-    
-    while(this._requests.length > 0) 
+
+    while(this._requests.length > 0)
     {
       this._requests.shift().abort();
     }
@@ -139,6 +139,6 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
 
 });
 
-L.uGeoJSONLayer = function (options) {
-  return new L.UGeoJSONLayer(options);
+L.uGeoJSONLayer = function (uOptions, options) {
+  return new L.UGeoJSONLayer(uOptions, options);
 };
