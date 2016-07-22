@@ -100,7 +100,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
 			map.on('zoomend', this.onMoveEnd, this);
 
 			if (this.options.pollTime > 0) {
-			  this.intervalID = window.setInterval(this.onMoveEnd, this.options.pollTime);
+			  this.intervalID = window.setInterval(this.onMoveEnd.bind(this), this.options.pollTime);
 			}
 		}
 	}
