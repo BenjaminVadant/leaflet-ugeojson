@@ -60,12 +60,9 @@ In the second case, the plugin is going to look for the value of window["toto"] 
 
 ## How to use "enctype" option?
 This option means the request encoding type, by default it uses 'multipart/form-data' encodings, 
-for multpart/form-data
-			enctype: "form-data"
-for urlencode
-			enctype: "urlencoded"
-for json 
-			enctype: "json"
+for multpart/form-data - enctype: "form-data"
+for urlencode - enctype: "urlencoded"
+for json - enctype: "json"
 
 
 ## Dependencies

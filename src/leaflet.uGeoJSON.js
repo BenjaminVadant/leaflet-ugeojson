@@ -8,7 +8,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       maxRequests: 5,
       pollTime:0,
       once: false,
-			enctype: "urlencoded", //urlencoded || form-data || json
+			enctype: "form-data", //urlencoded || form-data || json
       after: function(data){}
     },
 
