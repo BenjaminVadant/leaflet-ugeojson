@@ -8,6 +8,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       maxRequests: 5,
       pollTime:0,
       once: false,
+			enctype: "urlencoded", //urlencoded || form-data || json
       after: function(data){}
     },
 
@@ -40,7 +41,11 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       this._requests.shift().abort();
     }
 
-    var postData = new FormData();
+		if (this.options.requestcontentype==="multipart/form-data"){
+		    var postData = new FormData();
+		} else {
+				var postData = {};
+		}
 
     for(var k in this.options.parameters)
     {
@@ -86,7 +91,20 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     };
 
     this._requests.push(request);
-    request.send(postData);
+		if(this.options.enctype=="urlencoded" || this.options.enctype=="json"){
+				reqData={};
+				for(var pair of postData.entries()) {
+						reqData[pair[0]]=pair[1];
+				}
+				if(this.options.enctype=="urlencoded") {
+						request.send($.param(reqData));
+				} else{
+						request.send(JSON.stringify(reqData));
+				} 
+				
+		} else {
+				request.send(postData);
+		}
   },
 
   onAdd: function (map) {

@@ -49,12 +49,24 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 * **once** : allow to load the layer only once. Default : false,
 * **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
 
+* **enctype** : set POST request encodings type. Default is multipart/form-data. can be "form-data", "urlencoded" or "json"
+
 ## How to use the "parameters" option?
 This option can be used in 2 ways : 
 * static : ```javascript parameters:{toto:123}, ```
 * dynamic: ```javacript parameters:{toto:{scope:window}}, ```
 
 In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
+
+## How to use "enctype" option?
+This option means the request encoding type, by default it uses 'multipart/form-data' encodings, 
+for multpart/form-data
+			enctype: "form-data"
+for urlencode
+			enctype: "urlencoded"
+for json 
+			enctype: "json"
+
 
 ## Dependencies
 - Leaflet (tried with version 0.7.3)
