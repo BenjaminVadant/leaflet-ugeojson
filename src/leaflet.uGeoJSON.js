@@ -1,4 +1,4 @@
-L.UGeoJSONLayer = L.GeoJSON.extend({
+﻿L.UGeoJSONLayer = L.GeoJSON.extend({
     options: {
       debug: false,
       light: true,
@@ -9,6 +9,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       pollTime:0,
       once: false,
 			enctype: "form-data", //urlencoded || form-data || json
+      afterFetch: function() {},
       after: function(data){}
     },
 
@@ -41,36 +42,37 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       this._requests.shift().abort();
     }
 
-		if (this.options.requestcontentype==="multipart/form-data"){
-		    var postData = new FormData();
-		} else {
-				var postData = {};
-		}
+    var postData = {};
 
     for(var k in this.options.parameters)
     {
       if(this.options.parameters[k].scope != undefined)
       {
-        postData.append(k,this.options.parameters[k].scope[k]);
+        postData[k]=this.options.parameters[k].scope[k];
       }
       else
       {
-        postData.append(k,this.options.parameters[k]);
+        postData[k]=this.options.parameters[k];
       }
     }
 
     var bounds = this._map.getBounds();
 
     if ( this.options.usebbox ) {
-      postData.append('bbox', bounds.toBBoxString());
-
+      postData.bbox = bounds.toBBoxString();
     } else {
-      postData.append('south', bounds.getSouth());
-      postData.append('north', bounds.getNorth());
-      postData.append('east', bounds.getEast());
-      postData.append('west', bounds.getWest());
+      postData.south = bounds.getSouth();
+      postData.north = bounds.getNorth();
+      postData.east = bounds.getEast();
+      postData.west = bounds.getWest();
     }
-    postData.append('zoom', this._map.getZoom());
+    postData.zoom = this._map.getZoom();
+    if(this.options.disableGreenLines){
+      postData.disableGreen = this.options.disableGreenLines();
+    }
+    if(this.options.showrawfcddata){
+      postData.showRaw = this.options.showrawfcddata();
+    }
 
     var self = this;
     var request = new XMLHttpRequest();
@@ -86,25 +88,32 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       }
 
       if (this.status >= 200 && this.status < 400) {
+        self.options.afterFetch();
         self.callback(JSON.parse(this.responseText));
       }
     };
 
     this._requests.push(request);
+
 		if(this.options.enctype=="urlencoded" || this.options.enctype=="json"){
-				reqData={};
-				for(var pair of postData.entries()) {
-						reqData[pair[0]]=pair[1];
-				}
+				// reqData={};
+				// for(var pair of postData.entries()) {
+				// 		reqData[pair[0]]=pair[1];
+				// }
 				if(this.options.enctype=="urlencoded") {
-						request.send($.param(reqData));
+						request.send($.param(postData));
 				} else{
-						request.send(JSON.stringify(reqData));
-				} 
-				
+						request.send(JSON.stringify(postData));
+				}
+
 		} else {
-				request.send(postData);
+        var postFormData = new FormData();
+          for (p in postData){
+            postFormData.append(p, postData[p]);
+          }
+				request.send(postFormData);
 		}
+
   },
 
   onAdd: function (map) {
