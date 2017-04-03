@@ -8,7 +8,7 @@
       maxRequests: 5,
       pollTime:0,
       once: false,
-			enctype: "form-data", //urlencoded || form-data || json
+      enctype: "form-data", //urlencoded || form-data || json
       afterFetch: function() {},
       after: function(data){}
     },
@@ -52,7 +52,11 @@
       }
       else
       {
-        postData[k]=this.options.parameters[k];
+          if(typeof(postData[k]=this.options.parameters[k])=="function")
+            postData[k]=this.options.parameters[k]();
+          else {
+            postData[k]=this.options.parameters[k];
+          }
       }
     }
 
@@ -67,12 +71,6 @@
       postData.west = bounds.getWest();
     }
     postData.zoom = this._map.getZoom();
-    if(this.options.disableGreenLines){
-      postData.disableGreen = this.options.disableGreenLines();
-    }
-    if(this.options.showrawfcddata){
-      postData.showRaw = this.options.showrawfcddata();
-    }
 
     var self = this;
     var request = new XMLHttpRequest();
@@ -95,42 +93,46 @@
 
     this._requests.push(request);
 
-		if(this.options.enctype=="urlencoded" || this.options.enctype=="json"){
-				// reqData={};
-				// for(var pair of postData.entries()) {
-				// 		reqData[pair[0]]=pair[1];
-				// }
-				if(this.options.enctype=="urlencoded") {
-						request.send($.param(postData));
-				} else{
-						request.send(JSON.stringify(postData));
-				}
+  if(this.options.enctype=="urlencoded" || this.options.enctype=="json"){
+    if(this.options.enctype=="urlencoded") {
+      // urlencoded request
+      let urlencoded="";
+      for(p in postData){
+        if(urlencoded.length>0) urlencoded+="&";
+        urlencoded+=p+"="+postData[p];
+      }
+      request.send(urlencoded);
+    } else{
+      // json request
+      request.send(JSON.stringify(postData));
+    }
 
-		} else {
-        var postFormData = new FormData();
-          for (p in postData){
-            postFormData.append(p, postData[p]);
-          }
-				request.send(postFormData);
-		}
+  } else {
+    var postFormData = new FormData();
+    for (p in postData){
+      postFormData.append(p, postData[p]);
+    }
+    request.send(postFormData);
+  }
 
   },
 
   onAdd: function (map) {
     this._map = map;
-
+    _this=this;
     if (this.options.endpoint.indexOf("http") != -1) {
-		this.onMoveEnd();
+      this.onMoveEnd();
 
-		if(!this.options.once) {
-			map.on('dragend', this.onMoveEnd, this);
-			map.on('zoomend', this.onMoveEnd, this);
+      if(!this.options.once) {
+        map.on('dragend', this.onMoveEnd, this);
+        map.on('zoomend', this.onMoveEnd, this);
+        map.on("refresh", this.onMoveEnd, this);
 
-			if (this.options.pollTime > 0) {
-			  this.intervalID = window.setInterval(this.onMoveEnd.bind(this), this.options.pollTime);
-			}
-		}
-	}
+        if (this.options.pollTime > 0) {
+          this.intervalID = window.setInterval(this.onMoveEnd.bind(this), this.options.pollTime);
+        }
+      }
+    }
 
     if (this.options.debug) {
       console.debug("add layer");
@@ -153,13 +155,16 @@
     }
 
     if(!this.options.once) {
-		map.off({
-		  'dragend': this.onMoveEnd
-		}, this);
-		map.off({
-		  'zoomend': this.onMoveEnd
-		}, this);
-	}
+      map.off({
+        'dragend': this.onMoveEnd
+      }, this);
+      map.off({
+        'zoomend': this.onMoveEnd
+      }, this);
+        map.off({
+        'refresh': this.onMoveEnd
+      }, this);
+    }
 
     this._map = null;
   }
