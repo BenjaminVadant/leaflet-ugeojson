@@ -99,7 +99,7 @@
       let urlencoded="";
       for(p in postData){
         if(urlencoded.length>0) urlencoded+="&";
-        urlencoded+=p+"="+postData[p];
+        urlencoded+=encodeURIComponent(p)+"="+encodeURIComponent(postData[p]);
       }
       request.send(urlencoded);
     } else{
