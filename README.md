@@ -46,10 +46,11 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 * **usebbox**: send the bounding box values as `bbox=southwest_lng,southwest_lat,northeast_lng,northeast_lat` instead of the default individual `south`, `north`, `east` and `west` parameters. Default : false,
 
 * **parameters**: additional parameters to the post requests,
+* **headers**: headers to include to the post requests (authorization by example),
 * **once** : allow to load the layer only once. Default : false,
 * **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
 
-## How to use the "parameters" option?
+## How to use the "parameters" and "headers" option?
 This option can be used in 2 ways : 
 * static : ```javascript parameters:{toto:123}, ```
 * dynamic: ```javacript parameters:{toto:{scope:window}}, ```
