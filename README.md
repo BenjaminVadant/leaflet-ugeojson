@@ -50,12 +50,37 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 * **once** : allow to load the layer only once. Default : false,
 * **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
 
-## How to use the "parameters" and "headers" option?
+## How to use the "parameters" option?
 This option can be used in 2 ways : 
 * static : ```javascript parameters:{toto:123}, ```
 * dynamic: ```javacript parameters:{toto:{scope:window}}, ```
 
 In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
+
+## How to use the "headers" option?
+This option can be used in 2 ways : 
+* static : ```javascript headers:{toto:123}, ```
+* dynamic: ```javacript headers:{toto:{scope:window}}, ```
+
+In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
+
+This is an example to include CSRF header in request:
+```javascript
+  var headers = {};
+
+  // CSRF headers
+  var token = jQuery("meta[name='_csrf']").attr("content");
+  var header = jQuery("meta[name='_csrf_header']").attr("content");
+  if (header) {
+    headers[header]= token;
+  }
+
+  var customers = new L.uGeoJSONLayer({
+    endpoint : "/layers/customers",
+    headers: headers
+  }).addTo(map);
+```
+
 
 ## Dependencies
 - Leaflet (tried with version 0.7.3)
