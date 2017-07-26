@@ -5,6 +5,7 @@
       usebbox: false,
       endpoint: "-1",
       parameters: {},
+      headers: {},
       maxRequests: 5,
       pollTime:0,
       once: false,
@@ -75,6 +76,18 @@
     var self = this;
     var request = new XMLHttpRequest();
     request.open("POST", this.options.endpoint, true);
+    for(var k in this.options.headers)
+    {
+      if(this.options.headers[k].scope != undefined)
+      {
+        request.setRequestHeader(k,this.options.headers[k].scope[k]);
+      }
+      else
+      {
+        request.setRequestHeader(k,this.options.headers[k]);
+      }
+    }
+
     request.onload = function() {
       for(var i in self._requests)
       {
@@ -119,9 +132,9 @@
 
   onAdd: function (map) {
     this._map = map;
-    _this=this;
-    if (this.options.endpoint.indexOf("http") != -1) {
-      this.onMoveEnd();
+
+    if (this.options.endpoint != undefined && this.options.endpoint != "-1") {
+		  this.onMoveEnd();
 
       if(!this.options.once) {
         map.on('dragend', this.onMoveEnd, this);

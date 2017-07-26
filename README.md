@@ -46,6 +46,7 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 * **usebbox**: send the bounding box values as `bbox=southwest_lng,southwest_lat,northeast_lng,northeast_lat` instead of the default individual `south`, `north`, `east` and `west` parameters. Default : false,
 
 * **parameters**: additional parameters to the post requests,
+* **headers**: headers to include to the post requests (authorization by example),
 * **once** : allow to load the layer only once. Default : false,
 * **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
 * **afterFetch** : a function that called after the data is fetched, but not rendered yet. Used for accurate destroy previous rendered layers. Default : none,
@@ -70,6 +71,29 @@ parameters: function(){return "some value";}
 ```
 
 In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
+
+## How to use the "headers" option?
+This option can be used in 2 ways : 
+* static : ```javascript headers:{toto:123}, ```
+* dynamic: ```javacript headers:{toto:{scope:window}}, ```
+
+In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
+
+This is an example to include CSRF header in request:
+```javascript
+  var headers = {};
+
+  // CSRF headers
+  var token = jQuery("meta[name='_csrf']").attr("content");
+  var header = jQuery("meta[name='_csrf_header']").attr("content");
+  if (header) {
+    headers[header]= token;
+  }
+
+  var customers = new L.uGeoJSONLayer({
+    endpoint : "/layers/customers",
+    headers: headers
+  }).addTo(map);
 
 ## How to use "enctype" option?
 This option means the request encoding type, by default it uses 'multipart/form-data' encodings, 
@@ -98,7 +122,6 @@ Refresh event can be fired for immediate reload geo data.
 ```javascript 
 map.fireEvent("refresh");
 ```
-
 
 ## Dependencies
 - Leaflet (tried with version 0.7.3)
