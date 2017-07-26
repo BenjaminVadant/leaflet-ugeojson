@@ -49,11 +49,26 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 * **headers**: headers to include to the post requests (authorization by example),
 * **once** : allow to load the layer only once. Default : false,
 * **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
+* **afterFetch** : a function that called after the data is fetched, but not rendered yet. Used for accurate destroy previous rendered layers. Default : none,
+* **enctype** : set POST request encodings type. Default is multipart/form-data. can be "form-data", "urlencoded" or "json"
+
+Events:
+* **refresh** : refresh layers event, can be fired ```javascript m.fireEvent("refresh");``` there m - leaflet map.
 
 ## How to use the "parameters" option?
 This option can be used in 2 ways : 
-* static : ```javascript parameters:{toto:123}, ```
-* dynamic: ```javacript parameters:{toto:{scope:window}}, ```
+* static : 
+```javascript 
+parameters:{toto:123}, 
+```
+* dynamic: 
+```javacript 
+parameters:{toto:{scope:window}}, 
+```
+* function: 
+```javascript 
+parameters: function(){return "some value";} 
+```
 
 In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
 
@@ -79,8 +94,34 @@ This is an example to include CSRF header in request:
     endpoint : "/layers/customers",
     headers: headers
   }).addTo(map);
+
+## How to use "enctype" option?
+This option means the request encoding type, by default it uses 'multipart/form-data' encodings, 
+for multpart/form-data - enctype: "form-data" (default)
+for urlencode - enctype: "urlencoded"
+for json - enctype: "json"
+
+## How to use "afterFetch" option?
+If you render a some custom layers via 'onEachFeature' or 'filter' GeoJSON options, you can mark layers with some option, im called its 'type'
+and when reload data from server, it's need to destroy previously created layers.
+For example, i add polylines with 'type':'traffic' option (via filter), and remove it by check this option is exists.
+```javascript
+var afterFetch= function() {
+  map.eachLayer(function(lay){
+    if(lay.hasOwnProperty("options") && lay.options.hasOwnProperty("type")){
+      if(lay.options.type==="traffic"){
+        lay.remove();
+      }
+    }
+  });
+};
 ```
 
+## How to fire refresh event
+Refresh event can be fired for immediate reload geo data.
+```javascript 
+map.fireEvent("refresh");
+```
 
 ## Dependencies
 - Leaflet (tried with version 0.7.3)

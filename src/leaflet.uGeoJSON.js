@@ -1,4 +1,4 @@
-L.UGeoJSONLayer = L.GeoJSON.extend({
+﻿L.UGeoJSONLayer = L.GeoJSON.extend({
     options: {
       debug: false,
       light: true,
@@ -9,6 +9,8 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       maxRequests: 5,
       pollTime:0,
       once: false,
+      enctype: "form-data", //urlencoded || form-data || json
+      afterFetch: function() {},
       after: function(data){}
     },
 
@@ -41,32 +43,35 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       this._requests.shift().abort();
     }
 
-    var postData = new FormData();
+    var postData = {};
 
     for(var k in this.options.parameters)
     {
       if(this.options.parameters[k].scope != undefined)
       {
-        postData.append(k,this.options.parameters[k].scope[k]);
+        postData[k]=this.options.parameters[k].scope[k];
       }
       else
       {
-        postData.append(k,this.options.parameters[k]);
+          if(typeof(postData[k]=this.options.parameters[k])=="function")
+            postData[k]=this.options.parameters[k]();
+          else {
+            postData[k]=this.options.parameters[k];
+          }
       }
     }
 
     var bounds = this._map.getBounds();
 
     if ( this.options.usebbox ) {
-      postData.append('bbox', bounds.toBBoxString());
-
+      postData.bbox = bounds.toBBoxString();
     } else {
-      postData.append('south', bounds.getSouth());
-      postData.append('north', bounds.getNorth());
-      postData.append('east', bounds.getEast());
-      postData.append('west', bounds.getWest());
+      postData.south = bounds.getSouth();
+      postData.north = bounds.getNorth();
+      postData.east = bounds.getEast();
+      postData.west = bounds.getWest();
     }
-    postData.append('zoom', this._map.getZoom());
+    postData.zoom = this._map.getZoom();
 
     var self = this;
     var request = new XMLHttpRequest();
@@ -94,30 +99,53 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       }
 
       if (this.status >= 200 && this.status < 400) {
+        self.options.afterFetch();
         self.callback(JSON.parse(this.responseText));
       }
     };
 
     this._requests.push(request);
-    request.send(postData);
+
+  if(this.options.enctype=="urlencoded" || this.options.enctype=="json"){
+    if(this.options.enctype=="urlencoded") {
+      // urlencoded request
+      let urlencoded="";
+      for(p in postData){
+        if(urlencoded.length>0) urlencoded+="&";
+        urlencoded+=encodeURIComponent(p)+"="+encodeURIComponent(postData[p]);
+      }
+      request.send(urlencoded);
+    } else{
+      // json request
+      request.send(JSON.stringify(postData));
+    }
+
+  } else {
+    var postFormData = new FormData();
+    for (p in postData){
+      postFormData.append(p, postData[p]);
+    }
+    request.send(postFormData);
+  }
+
   },
 
   onAdd: function (map) {
     this._map = map;
 
-    if (this.options.endpoint != undefined 
-            && this.options.endpoint != "-1") {
-		this.onMoveEnd();
+    if (this.options.endpoint != undefined && this.options.endpoint != "-1") {
+		  this.onMoveEnd();
 
-		if(!this.options.once) {
-			map.on('dragend', this.onMoveEnd, this);
-			map.on('zoomend', this.onMoveEnd, this);
+      if(!this.options.once) {
+        map.on('dragend', this.onMoveEnd, this);
+        map.on('zoomend', this.onMoveEnd, this);
+        map.on("refresh", this.onMoveEnd, this);
 
-			if (this.options.pollTime > 0) {
-			  this.intervalID = window.setInterval(this.onMoveEnd.bind(this), this.options.pollTime);
-			}
-		}
-	}
+        if (this.options.pollTime > 0) {
+          this.intervalID = window.setInterval(this.onMoveEnd.bind(this), this.options.pollTime);
+        }
+      }
+    }
 
     if (this.options.debug) {
       console.debug("add layer");
@@ -140,13 +168,16 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     }
 
     if(!this.options.once) {
-		map.off({
-		  'dragend': this.onMoveEnd
-		}, this);
-		map.off({
-		  'zoomend': this.onMoveEnd
-		}, this);
-	}
+      map.off({
+        'dragend': this.onMoveEnd
+      }, this);
+      map.off({
+        'zoomend': this.onMoveEnd
+      }, this);
+        map.off({
+        'refresh': this.onMoveEnd
+      }, this);
+    }
 
     this._map = null;
   }
