@@ -80,6 +80,7 @@ This option can be used in 2 ways :
 In the second case, the plugin is going to look for the value of window["toto"] as the value of the post parameters toto.
 
 This is an example to include CSRF header in request:
+
 ```javascript
   var headers = {};
 
@@ -94,17 +95,19 @@ This is an example to include CSRF header in request:
     endpoint : "/layers/customers",
     headers: headers
   }).addTo(map);
+```
 
 ## How to use "enctype" option?
-This option means the request encoding type, by default it uses 'multipart/form-data' encodings, 
-for multpart/form-data - enctype: "form-data" (default)
-for urlencode - enctype: "urlencoded"
-for json - enctype: "json"
+This option means the request encoding type, by default it uses 'multipart/form-data' encodings,<br> 
+for multpart/form-data - enctype: "form-data" (default)<br>
+for urlencode - enctype: "urlencoded"<br>
+for json - enctype: "json"<br>
 
 ## How to use "afterFetch" option?
 If you render a some custom layers via 'onEachFeature' or 'filter' GeoJSON options, you can mark layers with some option, im called its 'type'
 and when reload data from server, it's need to destroy previously created layers.
 For example, i add polylines with 'type':'traffic' option (via filter), and remove it by check this option is exists.
+
 ```javascript
 var afterFetch= function() {
   map.eachLayer(function(lay){
@@ -132,5 +135,5 @@ This plugin is working but might not be optimal, so feel free to fork it and sen
 ## Remark
 I'm not using the "movend" event as it triggers strange behavior : it can start an autocall loop! So I prefer to use dragend and zoomend.
 
-##Thanks
+## Thanks
 I would like to thank kartenkarsten for his plugin https://github.com/kartenkarsten/leaflet-layer-overpass/ which was a base for this one.
