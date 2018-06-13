@@ -109,8 +109,8 @@
   if(this.options.enctype=="urlencoded" || this.options.enctype=="json"){
     if(this.options.enctype=="urlencoded") {
       // urlencoded request
-      let urlencoded="";
-      for(p in postData){
+      var urlencoded="";
+      for(var p in postData){
         if(urlencoded.length>0) urlencoded+="&";
         urlencoded+=encodeURIComponent(p)+"="+encodeURIComponent(postData[p]);
       }
@@ -122,7 +122,7 @@
 
   } else {
     var postFormData = new FormData();
-    for (p in postData){
+    for (var p in postData){
       postFormData.append(p, postData[p]);
     }
     request.send(postFormData);
