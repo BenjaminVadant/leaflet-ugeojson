@@ -44,20 +44,19 @@
     }
 
     var postData = {};
-
-    for(var k in this.options.parameters)
-    {
-      if(this.options.parameters[k].scope != undefined)
+    if (typeof this.options.parameters === 'function') {
+      postData = this.options.parameters();
+    } else {
+      for(var k in this.options.parameters)
       {
-        postData[k]=this.options.parameters[k].scope[k];
-      }
-      else
-      {
-          if(typeof(postData[k]=this.options.parameters[k])=="function")
-            postData[k]=this.options.parameters[k]();
-          else {
-            postData[k]=this.options.parameters[k];
-          }
+        if(this.options.parameters[k].scope != undefined)
+        {
+	  postData[k]=this.options.parameters[k].scope[k];
+        }
+        else
+        {
+	  postData[k]=this.options.parameters[k];
+        }
       }
     }
 
