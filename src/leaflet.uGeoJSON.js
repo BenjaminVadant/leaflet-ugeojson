@@ -10,6 +10,7 @@
       pollTime:0,
       once: false,
       enctype: "form-data", //urlencoded || form-data || json
+      transformData: function(data) {},
       afterFetch: function() {},
       after: function(data){}
     },
@@ -98,8 +99,14 @@
       }
 
       if (this.status >= 200 && this.status < 400) {
+        var data = JSON.parse(this.responseText);
+
+        if (self.options.transformData) {
+          data = self.options.transformData(data);
+        }
+
         self.options.afterFetch();
-        self.callback(JSON.parse(this.responseText));
+        self.callback(data);
       }
     };
 
