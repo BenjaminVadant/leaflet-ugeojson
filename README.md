@@ -50,7 +50,7 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 * **once** : allow to load the layer only once. Default : false,
 * **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
 * **afterFetch** : a function that called after the data is fetched, but not rendered yet. Used for accurate destroy previous rendered layers. Default : none,
-* **transfomData**: a function to manipulate the response from server before render it.  
+* **transfomData**: a function to manipulate the response from server before rendering it.  
 * **enctype** : set POST request encodings type. Default is multipart/form-data. can be "form-data", "urlencoded" or "json"
 
 Events:
@@ -122,7 +122,7 @@ var afterFetch= function() {
 ```
 
 ## How to use "transformData" option?
-This function receives the data from server and you can overwrite it with the return value.
+This function receives the data from server and transform it before it is inserted in the threejs layer.
 
 For example, if your server return something like this:
 
