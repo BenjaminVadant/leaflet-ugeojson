@@ -157,6 +157,16 @@ Refresh event can be fired for immediate reload geo data.
 map.fireEvent("refresh");
 ```
 
+## How to temporarily disable fetching content
+Using the toggleDisabled method:
+```javascript
+layer.toggleDisabled();
+```
+You can access to the current state like so:
+```javascript
+layer.options.disabled;
+```
+
 ## Dependencies
 - Leaflet (tried with version 0.7.3)
 
