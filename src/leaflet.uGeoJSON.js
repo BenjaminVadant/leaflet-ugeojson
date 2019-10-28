@@ -33,7 +33,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     this._requests = [];
   },
   onMoveEnd: function () {
-    if (this.disabled) {
+    if (this.options.disabled) {
       return;
     }
     if (this.options.debug) {
@@ -190,7 +190,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
   },
 
   toggleDisabled() {
-    this.disabled = !this.disabled;
+    this.options.disabled = !this.options.disabled;
   }
 });
 
