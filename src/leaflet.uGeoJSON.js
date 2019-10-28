@@ -1,4 +1,4 @@
-﻿L.UGeoJSONLayer = L.GeoJSON.extend({
+L.UGeoJSONLayer = L.GeoJSON.extend({
   options: {
     debug: false,
     light: true,
@@ -9,6 +9,7 @@
     maxRequests: 5,
     pollTime:0,
     once: false,
+    minzoom: 0,
     enctype: 'form-data', //urlencoded || form-data || json
     transformData: function (data) { return data; },
     afterFetch: function () {},
@@ -34,12 +35,21 @@
     if (this.options.debug) {
       console.debug('load Data');
     }
+    var postData = {};
+    postData.zoom = this._map.getZoom();
 
     while(this._requests.length > this.options.maxRequests) { //This allows to stop the oldest requests
       this._requests.shift().abort();
     }
+    
+    if (postData.zoom < this.options.minzoom) {
+      if (this.options.debug) {
+        console.debug('ignoring zoomlevel '+postData.zoom+' (< '+this.options.minzoom+')');
+      }
+      this.clearLayers();
+      return;
+    }
 
-    var postData = {};
     if (typeof this.options.parameters === 'function') {
       postData = this.options.parameters();
     } else {
@@ -61,7 +71,6 @@
       postData.east = bounds.getEast();
       postData.west = bounds.getWest();
     }
-    postData.zoom = this._map.getZoom();
 
     var self = this;
     var request = new XMLHttpRequest();
