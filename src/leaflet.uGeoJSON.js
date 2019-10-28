@@ -14,6 +14,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     transformData: function (data) { return data; },
     afterFetch: function () {},
     after: function (data) {},
+    disabled: false,
   },
   callback: function (data) {
     if(this.options.light) {
@@ -32,6 +33,9 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     this._requests = [];
   },
   onMoveEnd: function () {
+    if (this.options.disabled) {
+      return;
+    }
     if (this.options.debug) {
       console.debug('load Data');
     }
@@ -183,6 +187,10 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     }
 
     this._map = null;
+  },
+
+  toggleDisabled() {
+    this.options.disabled = !this.options.disabled;
   }
 });
 
