@@ -35,20 +35,12 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     if (this.options.debug) {
       console.debug('load Data');
     }
-    var postData = {};
-    postData.zoom = this._map.getZoom();
 
     while(this._requests.length > this.options.maxRequests) { //This allows to stop the oldest requests
       this._requests.shift().abort();
     }
-    
-    if (postData.zoom < this.options.minzoom) {
-      if (this.options.debug) {
-        console.debug('ignoring zoomlevel '+postData.zoom+' (< '+this.options.minzoom+')');
-      }
-      this.clearLayers();
-      return;
-    }
+	  
+    var postData = {};
 
     if (typeof this.options.parameters === 'function') {
       postData = this.options.parameters();
@@ -60,6 +52,16 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
 	        postData[k]=this.options.parameters[k];
         }
       }
+    }
+
+    postData.zoom = this._map.getZoom();
+    
+    if (postData.zoom < this.options.minzoom) {
+      if (this.options.debug) {
+        console.debug('ignoring zoomlevel '+postData.zoom+' (< '+this.options.minzoom+')');
+      }
+      this.clearLayers();
+      return;
     }
 
     var bounds = this._map.getBounds();
